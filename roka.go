@@ -1,8 +1,12 @@
 package main
 
 import (
+	"encoding/csv"
 	"flag"
 	"fmt"
+	// "io/ioutil"
+	"io"
+	"log"
 	"os"
 )
 
@@ -27,33 +31,23 @@ Options:
 
 func main() {
 
-	// Vowels
-	romaji["a"] = Kana{Hiragana: "あ", Katakana: "ア"}
-	romaji["i"] = Kana{Hiragana: "い"}
-	romaji["u"] = Kana{Hiragana: "う"}
-	romaji["e"] = Kana{Hiragana: "え"}
-	romaji["o"] = Kana{Hiragana: "お"}
+	file, err := os.Open("kana.csv")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
 
-	// K row
-	romaji["ka"] = Kana{Hiragana: "か"}
-	romaji["ki"] = Kana{Hiragana: "き"}
-	romaji["ku"] = Kana{Hiragana: "く"}
-	romaji["ke"] = Kana{Hiragana: "け"}
-	romaji["ko"] = Kana{Hiragana: "こ"}
+	csvReader := csv.NewReader(file)
 
-	// Dakuten
-	// G row
-	romaji["ga"] = Kana{Hiragana: "が"}
-	romaji["gi"] = Kana{Hiragana: "ぎ"}
-	romaji["gu"] = Kana{Hiragana: "ぐ"}
-	romaji["ge"] = Kana{Hiragana: "げ"}
-	romaji["go"] = Kana{Hiragana: "ご"}
-
-	// Yoon
-	// K row
-	romaji["kya"] = Kana{Hiragana: "かゃ"}
-	romaji["kyu"] = Kana{Hiragana: "くゃ"}
-	romaji["kyo"] = Kana{Hiragana: "こゃ"}
+	for {
+		fields, err := csvReader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			panic(err)
+		}
+		romaji[fields[0]] = Kana{Hiragana: fields[1], Katakana: fields[2]}
+	}
 
 	flag.Parse()
 
