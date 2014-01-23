@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
-	// "io/ioutil"
 	"io"
 	"log"
 	"os"
